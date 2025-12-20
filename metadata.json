@@ -1,0 +1,8 @@
+
+{
+  "name": "HireSmart AI - CV Tailor & Interview Simulator",
+  "description": "An intelligent HRTech platform that aligns your CV with Job Descriptions, provides ATS gap analysis, and simulates realistic interview scenarios using Gemini AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
