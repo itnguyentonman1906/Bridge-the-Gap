@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, Loader2, RefreshCw, Mic, MicOff, Info } from 'lucide-react';
+import { Send, User, Bot, Loader2, RefreshCw, Mic, Info } from 'lucide-react';
 import { startInterviewChat } from '../services/geminiService';
 import type { Message } from '../types';
 

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Layout, FileSearch, Mic2, Rocket, Briefcase, Zap, AlertCircle } from 'lucide-react';
+import { FileSearch, Mic2, Rocket } from 'lucide-react';
 import Analyzer from './components/Analyzer';
 import Simulator from './components/Simulator';
 import { AppTab } from './types';
