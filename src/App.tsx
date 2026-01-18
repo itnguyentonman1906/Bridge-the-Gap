@@ -4,14 +4,14 @@ import { FileSearch, Mic2, Rocket } from 'lucide-react';
 import Analyzer from './components/Analyzer';
 import Simulator from './components/Simulator';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import { LanguageProvider } from './i18n';
 import { AppTab } from './types';
+import { Suspense } from 'react';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.ANALYZER);
 
   return (
-    <LanguageProvider>
+    <Suspense fallback="loading">
       <div className="min-h-screen flex flex-col">
         {/* Header */}
         <header className="bg-white border-b sticky top-0 z-50 w-full">
@@ -77,7 +77,7 @@ const App: React.FC = () => {
           </button>
         </div>
       </div>
-    </LanguageProvider>
+    </Suspense>
   );
 };
 
