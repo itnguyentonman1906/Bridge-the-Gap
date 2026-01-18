@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, Loader2, RefreshCw, Mic, Info } from 'lucide-react';
 import { startInterviewChat } from '../services/geminiService';
 import type { Message } from '../types';
+import { GoogleGenAI } from '@google/genai';
 
 const Simulator: React.FC = () => {
   const [cvText, setCvText] = useState('');
@@ -11,7 +12,7 @@ const Simulator: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
-  const chatRef = useRef<any>(null);
+  const chatRef = useRef<ReturnType<typeof GoogleGenAI.prototype.chats.create>>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ const Simulator: React.FC = () => {
   };
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !chatRef.current) return;
     const userMsg = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);

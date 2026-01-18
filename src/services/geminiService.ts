@@ -2,8 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { GapAnalysis } from "../types";
 
-// Always initialize the GoogleGenAI client with the process.env.API_KEY string directly
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Always initialize the GoogleGenAI client with the process.env.GEMINI_API_KEY string directly
+const getAI = () => new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const analyzeCVMatch = async (cvText: string, jdText: string): Promise<GapAnalysis> => {
   const ai = getAI();
