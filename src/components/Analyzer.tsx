@@ -5,8 +5,10 @@ import { Upload, FileText, CheckCircle2, ChevronRight, AlertTriangle, Lightbulb,
 import { analyzeCVMatch } from '../services/geminiService';
 import MatchScore from './MatchScore';
 import type { GapAnalysis } from '../types';
+import { useLanguage } from '../i18n';
 
 const Analyzer: React.FC = () => {
+  const { t, language } = useLanguage();
   const [cvText, setCvText] = useState('');
   const [jdText, setJdText] = useState('');
   const [analysis, setAnalysis] = useState<GapAnalysis | null>(null);
@@ -15,16 +17,16 @@ const Analyzer: React.FC = () => {
 
   const handleAnalyze = async () => {
     if (!cvText || !jdText) {
-      setError('Please provide both your CV and the Job Description.');
+      setError(t('pleaseProvideCVAndJD'));
       return;
     }
     setError(null);
     setIsAnalyzing(true);
     try {
-      const result = await analyzeCVMatch(cvText, jdText);
+      const result = await analyzeCVMatch(cvText, jdText, language);
       setAnalysis(result);
     } catch (err) {
-      setError('Failed to analyze. Please check your API key and try again.');
+      setError(t('failedToAnalyze'));
       console.error(err);
     } finally {
       setIsAnalyzing(false);
@@ -35,10 +37,10 @@ const Analyzer: React.FC = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">
-          Bridge the <span className="text-indigo-600">Gap</span>
+          {t('bridgeTheGap')} <span className="text-indigo-600">{t('gap')}</span>
         </h1>
         <p className="text-lg text-gray-600">
-          Paste your resume and the job description. We'll show you exactly what's missing and how to beat the ATS.
+          {t('pasteResumeAndJD')}
         </p>
       </div>
 
@@ -48,11 +50,11 @@ const Analyzer: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <FileText className="text-indigo-600" size={20} />
-              <h2 className="text-lg font-bold text-gray-800">Your Resume Content</h2>
+              <h2 className="text-lg font-bold text-gray-800">{t('yourResumeContent')}</h2>
             </div>
             <textarea
               className="w-full h-48 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none text-sm resize-none"
-              placeholder="Paste the text from your CV here..."
+              placeholder={t('pasteCVHere')}
               value={cvText}
               onChange={(e) => setCvText(e.target.value)}
             />
@@ -61,11 +63,11 @@ const Analyzer: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Upload className="text-indigo-600" size={20} />
-              <h2 className="text-lg font-bold text-gray-800">Job Description</h2>
+              <h2 className="text-lg font-bold text-gray-800">{t('jobDescription')}</h2>
             </div>
             <textarea
               className="w-full h-48 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none text-sm resize-none"
-              placeholder="Paste the target Job Description here..."
+              placeholder={t('pasteJDHere')}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
             />
@@ -79,11 +81,11 @@ const Analyzer: React.FC = () => {
             {isAnalyzing ? (
               <>
                 <Loader2 className="animate-spin" />
-                Analyzing Potential...
+                {t('analyzingPotential')}...
               </>
             ) : (
               <>
-                Analyze Compatibility
+                {t('analyzeCompatibility')}
                 <ChevronRight size={20} />
               </>
             )}
@@ -104,8 +106,8 @@ const Analyzer: React.FC = () => {
               <div className="p-4 bg-indigo-100 rounded-full">
                 <Lightbulb size={32} className="text-indigo-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-800">Ready for Insights?</h3>
-              <p className="text-gray-500 max-w-xs">Fill in the fields on the left and hit Analyze to see your custom career dashboard.</p>
+              <h3 className="text-xl font-bold text-gray-800">{t('readyForInsights')}</h3>
+              <p className="text-gray-500 max-w-xs">{t('fillFieldsAndAnalyze')}</p>
             </div>
           )}
 
@@ -117,8 +119,8 @@ const Analyzer: React.FC = () => {
                 <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600" size={24} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold text-gray-800">Processing with Gemini</h3>
-                <p className="text-gray-500">Cross-referencing keywords, checking ATS compliance, and building your gap report...</p>
+                <h3 className="text-xl font-bold text-gray-800">{t('processingWithGemini')}</h3>
+                <p className="text-gray-500">{t('processingDescription')}</p>
               </div>
             </div>
           )}
@@ -127,15 +129,15 @@ const Analyzer: React.FC = () => {
             <div className="space-y-6 animate-in slide-in-from-right duration-500">
               {/* Score Dashboard */}
               <div className="grid grid-cols-2 gap-4">
-                <MatchScore label="Job Match" score={analysis.matchScore} color="indigo" />
-                <MatchScore label="ATS Health" score={analysis.atsScore} color="emerald" />
+                <MatchScore label={t('jobMatch')} score={analysis.matchScore} color="indigo" />
+                <MatchScore label={t('atsHealth')} score={analysis.atsScore} color="emerald" />
               </div>
 
               {/* Feedback Summary */}
               <div className="bg-white rounded-2xl border p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <CheckCircle2 size={20} className="text-emerald-500" />
-                  AI Summary
+                  {t('aiSummary')}
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
                   {analysis.resumeFeedback}
@@ -146,7 +148,7 @@ const Analyzer: React.FC = () => {
               <div className="bg-white rounded-2xl border p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <AlertTriangle size={20} className="text-amber-500" />
-                  Missing Skills
+                  {t('missingSkills')}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {analysis.missingSkills.map((skill, i) => (
@@ -162,7 +164,7 @@ const Analyzer: React.FC = () => {
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                   {/* Zap used here */}
                   <Zap size={20} className="text-indigo-500" />
-                  Recommended Keywords
+                  {t('recommendedKeywords')}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {analysis.recommendedKeywords.map((kw, i) => (
@@ -175,7 +177,7 @@ const Analyzer: React.FC = () => {
 
               {/* Section-wise Suggestions */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900 px-1">Actionable Suggestions</h3>
+                <h3 className="text-lg font-bold text-gray-900 px-1">{t('actionableSuggestions')}</h3>
                 {analysis.suggestions.map((s, i) => (
                   <div key={i} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4">
                     <div className="h-8 w-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-sm shrink-0">

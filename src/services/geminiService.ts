@@ -5,11 +5,18 @@ import type { GapAnalysis } from "../types";
 // Always initialize the GoogleGenAI client with the process.env.GEMINI_API_KEY string directly
 const getAI = () => new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-export const analyzeCVMatch = async (cvText: string, jdText: string): Promise<GapAnalysis> => {
+export const getLanguagePrompt = (language: string) => {
+  return language === 'vi'
+    ? 'Hãy trả lời bằng tiếng Việt. '
+    : '';
+};
+
+export const analyzeCVMatch = async (cvText: string, jdText: string, language: string = 'en'): Promise<GapAnalysis> => {
   const ai = getAI();
+  const languagePrompt = getLanguagePrompt(language);
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `Analyze the following CV against the provided Job Description (JD). 
+    contents: `${languagePrompt}Analyze the following CV against the provided Job Description (JD).
     CV: ${cvText}
     JD: ${jdText}`,
     config: {
@@ -42,16 +49,17 @@ export const analyzeCVMatch = async (cvText: string, jdText: string): Promise<Ga
   return JSON.parse(response.text || '{}') as GapAnalysis;
 };
 
-export const startInterviewChat = (cvText: string, jdText: string) => {
+export const startInterviewChat = (cvText: string, jdText: string, language: string = 'en') => {
   const ai = getAI();
+  const languagePrompt = getLanguagePrompt(language);
   return ai.chats.create({
     model: 'gemini-3-flash-preview',
     config: {
-      systemInstruction: `You are a professional Senior Hiring Manager. 
-      The user is applying for a job based on this JD: "${jdText}". 
+      systemInstruction: `${languagePrompt}You are a professional Senior Hiring Manager.
+      The user is applying for a job based on this JD: "${jdText}".
       Their background is: "${cvText}".
-      Conduct a realistic technical and behavioral interview. 
-      Ask one question at a time. 
+      Conduct a realistic technical and behavioral interview.
+      Ask one question at a time.
       Provide brief feedback after their answers and follow up.
       Be demanding but fair.`,
     }

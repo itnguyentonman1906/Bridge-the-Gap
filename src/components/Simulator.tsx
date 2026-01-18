@@ -4,8 +4,10 @@ import { Send, User, Bot, Loader2, RefreshCw, Mic, Info } from 'lucide-react';
 import { startInterviewChat } from '../services/geminiService';
 import type { Message } from '../types';
 import { GoogleGenAI } from '@google/genai';
+import { useLanguage } from '../i18n';
 
 const Simulator: React.FC = () => {
+  const { t, language } = useLanguage();
   const [cvText, setCvText] = useState('');
   const [jdText, setJdText] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -25,9 +27,9 @@ const Simulator: React.FC = () => {
     if (!cvText || !jdText) return;
     setIsLoading(true);
     try {
-      const chat = startInterviewChat(cvText, jdText);
+      const chat = startInterviewChat(cvText, jdText, language);
       chatRef.current = chat;
-      const response = await chat.sendMessage({ message: "Hello. I am ready for the interview. Please start." });
+      const response = await chat.sendMessage({ message: language === 'vi' ? "Xin chào. Tôi đã sẵn sàng cho buổi phỏng vấn. Vui lòng bắt đầu." : "Hello. I am ready for the interview. Please start." });
       setMessages([{ role: 'model', text: response.text || '' }]);
       setIsStarted(true);
     } catch (err) {
@@ -62,25 +64,25 @@ const Simulator: React.FC = () => {
           <div className="inline-block p-3 bg-indigo-100 rounded-2xl text-indigo-600 mb-2">
             <Mic size={32} />
           </div>
-          <h1 className="text-3xl font-extrabold text-gray-900">AI Interview Simulator</h1>
-          <p className="text-gray-600">Practice with a Senior Hiring Manager specialized in the role you're targeting. Receive real-time questions and build confidence.</p>
+          <h1 className="text-3xl font-extrabold text-gray-900">{t('aiInterviewSimulator')}</h1>
+          <p className="text-gray-600">{t('practiceDescription')}</p>
         </div>
 
         <div className="bg-white rounded-3xl border shadow-xl p-8 space-y-6">
           <div className="space-y-4">
-            <label className="block text-sm font-bold text-gray-700">Paste your Resume</label>
+            <label className="block text-sm font-bold text-gray-700">{t('yourResumeContent')}</label>
             <textarea
               className="w-full h-32 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-              placeholder="The AI needs to know your background..."
+              placeholder={t('aiNeedsBackground')}
               value={cvText}
               onChange={(e) => setCvText(e.target.value)}
             />
           </div>
           <div className="space-y-4">
-            <label className="block text-sm font-bold text-gray-700">Paste the Job Description</label>
+            <label className="block text-sm font-bold text-gray-700">{t('jobDescription')}</label>
             <textarea
               className="w-full h-32 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-              placeholder="The AI needs to know the role requirements..."
+              placeholder={t('aiNeedsRoleRequirements')}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
             />
@@ -90,13 +92,13 @@ const Simulator: React.FC = () => {
             disabled={!cvText || !jdText || isLoading}
             className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:bg-gray-300 transition-all flex items-center justify-center gap-2"
           >
-            {isLoading ? <Loader2 className="animate-spin" /> : 'Enter Interview Room'}
+            {isLoading ? <Loader2 className="animate-spin" /> : t('enterInterviewRoom')}
           </button>
         </div>
 
         <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex gap-3 text-sm text-blue-700">
           <Info size={20} className="shrink-0" />
-          <p>The simulator will ask questions one by one. Treat it like a real interview for best results.</p>
+          <p>{t('simulatorInfo')}</p>
         </div>
       </div>
     );
@@ -112,10 +114,10 @@ const Simulator: React.FC = () => {
             </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
-          <div>
-            <h3 className="font-bold text-gray-800 leading-none">Senior Interviewer</h3>
-            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest">Active Session</span>
-          </div>
+            <div>
+              <h3 className="font-bold text-gray-800 leading-none">{t('seniorInterviewer')}</h3>
+              <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest">{t('activeSession')}</span>
+            </div>
         </div>
         <button 
           onClick={() => { setIsStarted(false); setMessages([]); }}
@@ -160,10 +162,10 @@ const Simulator: React.FC = () => {
 
       <div className="p-4 bg-white border-t">
         <div className="relative flex items-center gap-2">
-          <input
+            <input
             type="text"
             className="flex-grow p-4 pr-12 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-indigo-500 text-sm outline-none transition-all"
-            placeholder="Type your answer here..."
+            placeholder={t('typeYourAnswer')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
