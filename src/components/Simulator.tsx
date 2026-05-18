@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, Loader2, RefreshCw, Mic, Info } from 'lucide-react';
 import { startInterviewChat } from '../services/geminiService';
@@ -14,7 +13,8 @@ const Simulator: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
-  const chatRef = useRef<ReturnType<typeof GoogleGenAI.prototype.chats.create>>(null);
+  const chatRef =
+    useRef<ReturnType<typeof GoogleGenAI.prototype.chats.create>>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +29,12 @@ const Simulator: React.FC = () => {
     try {
       const chat = startInterviewChat(cvText, jdText, language);
       chatRef.current = chat;
-      const response = await chat.sendMessage({ message: language === 'vi' ? "Xin chào. Tôi đã sẵn sàng cho buổi phỏng vấn. Vui lòng bắt đầu." : "Hello. I am ready for the interview. Please start." });
+      const response = await chat.sendMessage({
+        message:
+          language === 'vi'
+            ? 'Xin chào. Tôi đã sẵn sàng cho buổi phỏng vấn. Vui lòng bắt đầu.'
+            : 'Hello. I am ready for the interview. Please start.',
+      });
       setMessages([{ role: 'model', text: response.text || '' }]);
       setIsStarted(true);
     } catch (err) {
@@ -43,15 +48,24 @@ const Simulator: React.FC = () => {
     if (!input.trim() || isLoading || !chatRef.current) return;
     const userMsg = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setMessages((prev) => [...prev, { role: 'user', text: userMsg }]);
     setIsLoading(true);
 
     try {
       const response = await chatRef.current.sendMessage({ message: userMsg });
-      setMessages(prev => [...prev, { role: 'model', text: response.text || '' }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'model', text: response.text || '' },
+      ]);
     } catch (err) {
       console.error(err);
-      setMessages(prev => [...prev, { role: 'model', text: "Sorry, I encountered an error. Please try again." }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'model',
+          text: 'Sorry, I encountered an error. Please try again.',
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -59,29 +73,35 @@ const Simulator: React.FC = () => {
 
   if (!isStarted) {
     return (
-      <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
-        <div className="text-center space-y-4">
-          <div className="inline-block p-3 bg-indigo-100 rounded-2xl text-indigo-600 mb-2">
+      <div className='max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500'>
+        <div className='text-center space-y-4'>
+          <div className='inline-block p-3 bg-indigo-100 rounded-2xl text-indigo-600 mb-2'>
             <Mic size={32} />
           </div>
-          <h1 className="text-3xl font-extrabold text-gray-900">{t('aiInterviewSimulator')}</h1>
-          <p className="text-gray-600">{t('practiceDescription')}</p>
+          <h1 className='text-3xl font-extrabold text-gray-900'>
+            {t('aiInterviewSimulator')}
+          </h1>
+          <p className='text-gray-600'>{t('practiceDescription')}</p>
         </div>
 
-        <div className="bg-white rounded-3xl border shadow-xl p-8 space-y-6">
-          <div className="space-y-4">
-            <label className="block text-sm font-bold text-gray-700">{t('yourResumeContent')}</label>
+        <div className='bg-white rounded-3xl border shadow-xl p-8 space-y-6'>
+          <div className='space-y-4'>
+            <label className='block text-sm font-bold text-gray-700'>
+              {t('yourResumeContent')}
+            </label>
             <textarea
-              className="w-full h-32 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+              className='w-full h-32 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm'
               placeholder={t('aiNeedsBackground')}
               value={cvText}
               onChange={(e) => setCvText(e.target.value)}
             />
           </div>
-          <div className="space-y-4">
-            <label className="block text-sm font-bold text-gray-700">{t('jobDescription')}</label>
+          <div className='space-y-4'>
+            <label className='block text-sm font-bold text-gray-700'>
+              {t('jobDescription')}
+            </label>
             <textarea
-              className="w-full h-32 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+              className='w-full h-32 p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm'
               placeholder={t('aiNeedsRoleRequirements')}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
@@ -90,14 +110,18 @@ const Simulator: React.FC = () => {
           <button
             onClick={handleStart}
             disabled={!cvText || !jdText || isLoading}
-            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:bg-gray-300 transition-all flex items-center justify-center gap-2"
+            className='w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:bg-gray-300 transition-all flex items-center justify-center gap-2'
           >
-            {isLoading ? <Loader2 className="animate-spin" /> : t('enterInterviewRoom')}
+            {isLoading ? (
+              <Loader2 className='animate-spin' />
+            ) : (
+              t('enterInterviewRoom')
+            )}
           </button>
         </div>
 
-        <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex gap-3 text-sm text-blue-700">
-          <Info size={20} className="shrink-0" />
+        <div className='bg-blue-50 border border-blue-100 p-4 rounded-2xl flex gap-3 text-sm text-blue-700'>
+          <Info size={20} className='shrink-0' />
           <p>{t('simulatorInfo')}</p>
         </div>
       </div>
@@ -105,53 +129,72 @@ const Simulator: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-12rem)] flex flex-col bg-white rounded-3xl border shadow-xl overflow-hidden animate-in slide-in-from-bottom duration-500">
-      <div className="bg-gray-50 border-b p-4 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white">
+    <div className='max-w-4xl mx-auto h-[calc(100vh-12rem)] flex flex-col bg-white rounded-3xl border shadow-xl overflow-hidden animate-in slide-in-from-bottom duration-500'>
+      <div className='bg-gray-50 border-b p-4 flex justify-between items-center'>
+        <div className='flex items-center gap-3'>
+          <div className='relative'>
+            <div className='w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white'>
               <Bot size={24} />
             </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+            <div className='absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full'></div>
           </div>
-            <div>
-              <h3 className="font-bold text-gray-800 leading-none">{t('seniorInterviewer')}</h3>
-              <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest">{t('activeSession')}</span>
-            </div>
+          <div>
+            <h3 className='font-bold text-gray-800 leading-none'>
+              {t('seniorInterviewer')}
+            </h3>
+            <span className='text-[10px] text-gray-500 font-medium uppercase tracking-widest'>
+              {t('activeSession')}
+            </span>
+          </div>
         </div>
-        <button 
-          onClick={() => { setIsStarted(false); setMessages([]); }}
-          className="p-2 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors"
-          title="Reset Interview"
+        <button
+          onClick={() => {
+            setIsStarted(false);
+            setMessages([]);
+          }}
+          className='p-2 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors'
+          title='Reset Interview'
         >
           <RefreshCw size={18} />
         </button>
       </div>
 
-      <div ref={scrollRef} className="flex-grow p-6 overflow-y-auto space-y-6 scroll-smooth">
+      <div
+        ref={scrollRef}
+        className='flex-grow p-6 overflow-y-auto space-y-6 scroll-smooth'
+      >
         {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'}`}>
+          <div
+            key={i}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[80%] flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'}`}
+              >
                 {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
               </div>
-              <div className={`p-4 rounded-2xl text-sm leading-relaxed ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'}`}>
+              <div
+                className={`p-4 rounded-2xl text-sm leading-relaxed ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'}`}
+              >
                 {msg.text}
               </div>
             </div>
           </div>
         ))}
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%] flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
+          <div className='flex justify-start'>
+            <div className='max-w-[80%] flex gap-3'>
+              <div className='w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center shrink-0'>
                 <Bot size={16} />
               </div>
-              <div className="p-4 rounded-2xl bg-gray-100 text-gray-400 flex items-center gap-2">
-                <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+              <div className='p-4 rounded-2xl bg-gray-100 text-gray-400 flex items-center gap-2'>
+                <div className='flex gap-1'>
+                  <span className='w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce'></span>
+                  <span className='w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]'></span>
+                  <span className='w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]'></span>
                 </div>
                 Thinking...
               </div>
@@ -160,11 +203,11 @@ const Simulator: React.FC = () => {
         )}
       </div>
 
-      <div className="p-4 bg-white border-t">
-        <div className="relative flex items-center gap-2">
-            <input
-            type="text"
-            className="flex-grow p-4 pr-12 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-indigo-500 text-sm outline-none transition-all"
+      <div className='p-4 bg-white border-t'>
+        <div className='relative flex items-center gap-2'>
+          <input
+            type='text'
+            className='dark: text-black flex-grow p-4 pr-12 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-indigo-500 text-sm outline-none transition-all'
             placeholder={t('typeYourAnswer')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -173,7 +216,7 @@ const Simulator: React.FC = () => {
           <button
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="absolute right-2 p-2 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 disabled:bg-gray-300 transition-all active:scale-90"
+            className='absolute right-2 p-2 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 disabled:bg-gray-300 transition-all active:scale-90'
           >
             <Send size={20} />
           </button>
